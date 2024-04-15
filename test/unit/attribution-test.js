@@ -13,7 +13,7 @@ import {
   INPThresholds,
   LCPThresholds,
   TTFBThresholds,
-} from 'web-vitals/attribution';
+} from '@descript/web-vitals/attribution';
 
 describe('index', () => {
   it('exports Web Vitals metrics functions', () => {

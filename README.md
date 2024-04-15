@@ -75,7 +75,7 @@ For details on the difference between the builds, see <a href="#which-build-is-r
 To load the "standard" build, import modules from the `web-vitals` package in your application code (as you would with any npm package and node-based build tool):
 
 ```js
-import {onLCP, onFID, onCLS} from 'web-vitals';
+import {onLCP, onFID, onCLS} from '@descript/web-vitals';
 
 onCLS(console.log);
 onFID(console.log);
@@ -97,8 +97,8 @@ The "attribution" build is slightly larger than the "standard" build (by about 6
 To load the "attribution" build, change any `import` statements that reference `web-vitals` to `web-vitals/attribution`:
 
 ```diff
-- import {onLCP, onFID, onCLS} from 'web-vitals';
-+ import {onLCP, onFID, onCLS} from 'web-vitals/attribution';
+- import {onLCP, onFID, onCLS} from '@descript/web-vitals';
++ import {onLCP, onFID, onCLS} from '@descript/web-vitals/attribution';
 ```
 
 Usage for each of the imported function is identical to the standard build, but when importing from the attribution build, the [`Metric`](#metric) object will contain an additional [`attribution`](#metricwithattribution) property.
@@ -116,8 +116,8 @@ Loading the "base+polyfill" build is a two-step process:
 First, in your application code, import the "base" build rather than the "standard" build. To do this, change any `import` statements that reference `web-vitals` to `web-vitals/base`:
 
 ```diff
-- import {onLCP, onFID, onCLS} from 'web-vitals';
-+ import {onLCP, onFID, onCLS} from 'web-vitals/base';
+- import {onLCP, onFID, onCLS} from '@descript/web-vitals';
++ import {onLCP, onFID, onCLS} from '@descript/web-vitals/base';
 ```
 
 Then, inline the code from `dist/polyfill.js` into the `<head>` of your pages. This step is important since the "base" build will error if the polyfill code has not been added.
@@ -242,7 +242,7 @@ The following example measures each of the Core Web Vitals metrics and logs the 
 _(The examples below import the "standard" build, but they will work with the "attribution" build as well.)_
 
 ```js
-import {onCLS, onFID, onLCP} from 'web-vitals';
+import {onCLS, onFID, onLCP} from '@descript/web-vitals';
 
 onCLS(console.log);
 onFID(console.log);
@@ -272,7 +272,7 @@ _**Important:** `reportAllChanges` only reports when the **metric changes**, not
 This can be useful when debugging, but in general using `reportAllChanges` is not needed (or recommended) for measuring these metrics in production.
 
 ```js
-import {onCLS} from 'web-vitals';
+import {onCLS} from '@descript/web-vitals';
 
 // Logs CLS as the value changes.
 onCLS(console.log, {reportAllChanges: true});
@@ -287,7 +287,7 @@ Other analytics providers, however, do not allow this, so instead of reporting t
 The following example shows how to use the `id` and `delta` properties:
 
 ```js
-import {onCLS, onFID, onLCP} from 'web-vitals';
+import {onCLS, onFID, onLCP} from '@descript/web-vitals';
 
 function logDelta({name, id, delta}) {
   console.log(`${name} matching ID ${id} changed by ${delta}`);
@@ -309,7 +309,7 @@ The following example measures each of the Core Web Vitals metrics and reports t
 The `sendToAnalytics()` function uses the [`navigator.sendBeacon()`](https://developer.mozilla.org/docs/Web/API/Navigator/sendBeacon) method (if available), but falls back to the [`fetch()`](https://developer.mozilla.org/docs/Web/API/Fetch_API) API when not.
 
 ```js
-import {onCLS, onFID, onLCP} from 'web-vitals';
+import {onCLS, onFID, onLCP} from '@descript/web-vitals';
 
 function sendToAnalytics(metric) {
   // Replace with whatever serialization method you prefer.
@@ -333,7 +333,7 @@ Google Analytics does not support reporting metric distributions in any of its b
 [Google Analytics 4](https://support.google.com/analytics/answer/10089681) introduces a new Event model allowing custom parameters instead of a fixed category, action, and label. It also supports non-integer values, making it easier to measure Web Vitals metrics compared to previous versions.
 
 ```js
-import {onCLS, onFID, onLCP} from 'web-vitals';
+import {onCLS, onFID, onLCP} from '@descript/web-vitals';
 
 function sendToGoogleAnalytics({name, delta, value, id}) {
   // Assumes the global `gtag()` function exists, see:
@@ -375,7 +375,7 @@ When using the [attribution build](#attribution-build), you can send additional 
 This example sends an additional `debug_target` param to Google Analytics, corresponding to the element most associated with each metric.
 
 ```js
-import {onCLS, onFID, onLCP} from 'web-vitals/attribution';
+import {onCLS, onFID, onLCP} from '@descript/web-vitals/attribution';
 
 function sendToGoogleAnalytics({name, delta, value, id, attribution}) {
   const eventParams = {
@@ -422,7 +422,7 @@ However, since not all Web Vitals metrics become available at the same time, and
 Instead, you should keep a queue of all metrics that were reported and flush the queue whenever the page is backgrounded or unloaded:
 
 ```js
-import {onCLS, onFID, onLCP} from 'web-vitals';
+import {onCLS, onFID, onLCP} from '@descript/web-vitals';
 
 const queue = new Set();
 function addToQueue(metric) {
@@ -879,7 +879,7 @@ Note, this function waits until after the page is loaded to call `callback` in o
 For example, the TTFB metric starts from the page's [time origin](https://www.w3.org/TR/hr-time-2/#sec-time-origin), which means it includes time spent on DNS lookup, connection negotiation, network latency, and server processing time.
 
 ```js
-import {onTTFB} from 'web-vitals';
+import {onTTFB} from '@descript/web-vitals';
 
 onTTFB((metric) => {
   // Calculate the request time by subtracting from TTFB
@@ -899,7 +899,11 @@ The thresholds of each metric's "good", "needs improvement", and "poor" ratings 
 Example:
 
 ```ts
-import {CLSThresholds, FIDThresholds, LCPThresholds} from 'web-vitals';
+import {
+  CLSThresholds,
+  FIDThresholds,
+  LCPThresholds,
+} from '@descript/web-vitals';
 
 console.log(CLSThresholds); // [ 0.1, 0.25 ]
 console.log(FIDThresholds); // [ 100, 300 ]
