@@ -48,6 +48,9 @@
   <p>
     <button id="reset">Reset blocking time to zero</button>
   </p>
+  <p>
+    <button id="reset-metric">Reset metric</button>
+  </p>
 
   <p>
     <textarea id="textarea" style="width:40em;height:5em"></textarea>
@@ -65,6 +68,7 @@
 
     function block(event) {
       const blockingTime = Number(document.getElementById(`${event.type}-blocking-time`).value);
+      console.log('Blocking for', blockingTime, 'ms');
       const startTime = performance.now();
       while (performance.now() < startTime + blockingTime) {
         // Block...
@@ -116,7 +120,9 @@
       return node?.id ? `#${node.id}` : node?.nodeName?.toLowerCase();
     }
 
-    const {onINP} = await __testImport('{{ modulePath }}');
+    const {onINP, resetINP} = await __testImport('{{ modulePath }}');
+
+    document.getElementById('reset-metric').addEventListener('click', resetINP);
 
     onINP((inp) => {
       // Log for easier manual testing.

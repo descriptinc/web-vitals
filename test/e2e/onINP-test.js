@@ -387,6 +387,36 @@ describe('onINP()', async function () {
     assert.strictEqual(inp.navigationType, 'prerender');
   });
 
+  it('resets INP metric', async function () {
+    if (!browserSupportsINP) this.skip();
+
+    await navigateTo('/test/inp?click=100&reportAllChanges=1');
+
+    for (let i = 0; i < 10; i++) {
+      // should immediately report INP after resetting the metric
+      const resetMetric = await $('#reset-metric');
+      await resetMetric.click();
+
+      await stubVisibilityChange('hidden');
+
+      await beaconCountIs(1);
+
+      const [inp] = await getBeacons();
+      assert(inp.value >= 0);
+      assert(inp.id.match(/^v3-\d+-\d+$/));
+      assert.strictEqual(inp.name, 'INP');
+      assert.strictEqual(inp.value, inp.delta);
+      assert.strictEqual(inp.rating, 'good');
+      assert(containsEntry(inp.entries, 'click', '#reset-metric'));
+      assert(interactionIDsMatch(inp.entries));
+      assert(inp.entries[0].interactionId > 0);
+      assert.match(inp.navigationType, /navigate|reload/);
+
+      await clearBeacons();
+      await stubVisibilityChange('visible');
+    }
+  });
+
   it('reports restore as nav type for wasDiscarded', async function () {
     if (!browserSupportsINP) this.skip();
 
