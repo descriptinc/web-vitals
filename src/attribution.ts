@@ -24,7 +24,7 @@ export {onTTFB} from './attribution/onTTFB.js';
 export {CLSThresholds} from './onCLS.js';
 export {FCPThresholds} from './onFCP.js';
 export {FIDThresholds} from './onFID.js';
-export {INPThresholds} from './onINP.js';
+export {INPThresholds, resetINP} from './onINP.js';
 export {LCPThresholds} from './onLCP.js';
 export {TTFBThresholds} from './onTTFB.js';
 
