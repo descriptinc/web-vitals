@@ -240,9 +240,7 @@ export const onINP = (onReport: INPReportCallback, opts?: ReportOpts) => {
         report(true);
       });
 
-      // Only report after a bfcache restore if the `PerformanceObserver`
-      // successfully registered.
-      onBFCacheRestore(() => {
+      function resetMetric() {
         longestInteractionList = [];
         // Important, we want the count for the full page here,
         // not just for the current navigation.
@@ -255,7 +253,21 @@ export const onINP = (onReport: INPReportCallback, opts?: ReportOpts) => {
           INPThresholds,
           opts!.reportAllChanges,
         );
-      });
+      }
+
+      // Only report after a bfcache restore if the `PerformanceObserver`
+      // successfully registered.
+      onBFCacheRestore(resetMetric);
+
+      document.addEventListener('reset-web-vitals-inp', resetMetric);
     }
   });
+};
+
+/**
+ * Resets the INP metric to its initial state. Existing callbacks
+ * will be retained and called for the new metric.
+ */
+export const resetINP = () => {
+  document.dispatchEvent(new Event('reset-web-vitals-inp'));
 };
